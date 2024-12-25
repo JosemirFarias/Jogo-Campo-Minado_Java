@@ -1,10 +1,8 @@
 package br.com.cod3r.cm.modelo;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import br.com.cod3r.cm.excecao.ExplosaoException;
 
 public class CampoTeste {
@@ -132,5 +130,66 @@ public class CampoTeste {
 		
 		assertTrue(campo22.isAberto() && campo11.isFechado());
 	}
+	
+	@Test
+    void testeVizinhancaSegura() {
+        Campo vizinhoSeguro = new Campo(3, 2);
+        Campo vizinhoMinado = new Campo(3, 4);
+        vizinhoMinado.minar();
+
+        campo.adicionarVizinho(vizinhoSeguro);
+        campo.adicionarVizinho(vizinhoMinado);
+
+        assertFalse(campo.vizinhancaSegura());
+	}
+	
+
+    @Test
+    void testeObjetivoAlcancado() {
+    	
+        // Caso 1: Campo aberto não minado
+        campo.abrir();
+        assertTrue(campo.objetivoAlcancado());
+
+        // Caso 2: Campo minado e marcado
+        campo.reiniciar();
+        campo.minar();
+        campo.alternarMarcacao();
+        assertTrue(campo.objetivoAlcancado());
+
+        // Caso 3: Campo minado e não marcado
+        campo.reiniciar();
+        campo.minar();
+        assertFalse(campo.objetivoAlcancado());
+    }
+
+    @Test
+    void testeReiniciar() {
+        campo.abrir();
+        campo.minar();
+        campo.alternarMarcacao();
+        campo.reiniciar();
+
+        assertFalse(campo.isAberto());
+        assertFalse(campo.isMarcado());
+        assertTrue(campo.vizinhancaSegura());
+    }
+
+    @Test
+    void testeToString() {
+        assertEquals("?", campo.toString());
+        campo.alternarMarcacao();
+        assertEquals("x", campo.toString());
+
+        campo.reiniciar();
+        campo.minar();
+        try {
+            campo.abrir();
+        } catch (ExplosaoException e) {
+        	
+            // Ignorar para testar toString
+        }
+        assertEquals("*", campo.toString());
+    }
 
 }
