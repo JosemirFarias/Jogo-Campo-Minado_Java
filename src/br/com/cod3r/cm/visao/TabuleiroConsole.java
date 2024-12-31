@@ -1,7 +1,8 @@
 package br.com.cod3r.cm.visao;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
-
 import br.com.cod3r.cm.excecao.ExplosaoException;
 import br.com.cod3r.cm.excecao.SairException;
 import br.com.cod3r.cm.modelo.Tabuleiro;
@@ -41,19 +42,29 @@ public class TabuleiroConsole {
 
 	private void cicloDoJogo() {
 		try {
-			
-			while(tabuleiro.objetivoAlcancadoa() ) {
+			while(!tabuleiro.objetivoAlcancadoa() ) {
 				System.out.println(tabuleiro);
 				
-				String digitado = capturarValorDigitado("Digite (x, y)");
+				String digitado = capturarValorDigitado("Digite (x, y): ");
+
+				Iterator<Integer> xy = Arrays.stream(digitado.split(","))
+						.map(e -> Integer.parseInt(e.trim())).iterator();
+
+				digitado = capturarValorDigitado("1 - Abrir ou 2 - (Des)Marcar: ");
+
+				if ("1".equals(digitado)) {
+					tabuleiro.abrir(xy.next(), xy.next());
+				} else if ("2".equals(digitado)) {
+					tabuleiro.aternarMarcacao(xy.next(), xy.next());
+				}
 			}
-				
+			System.out.println(tabuleiro);
 			System.out.println("Você ganhou!!!");
 		} catch(ExplosaoException e) {
+			System.out.println(tabuleiro);
 			System.out.println("Você perdeu!");
 		}
 	}
-	
 	private String capturarValorDigitado(String texto) {
 		System.out.print(texto);
 		String digitado = entrada.nextLine();
